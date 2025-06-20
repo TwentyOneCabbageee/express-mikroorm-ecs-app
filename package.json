@@ -1,0 +1,51 @@
+{
+  "name": "express-mikroorm-ecs-app",
+  "version": "1.0.0",
+  "description": "A standalone Express API application using MikroORM, ready for deployment in Amazon ECS.",
+  "main": "src/server.ts",
+  "scripts": {
+    "start": "ts-node src/server.ts",
+    "build": "tsc",
+    "migration:create": "npx mikro-orm migration:create --initial --config src/config/mikro-orm.config.ts",
+    "migration:up": "npx mikro-orm migration:up --config src/config/mikro-orm.config.ts",
+    "migration:down": "npx mikro-orm migration:down --config src/config/mikro-orm.config.ts",
+    "test": "jest",
+    "docker:build": "docker build -t express-mikroorm-ecs-app .",
+    "docker:run": "docker run -p 3000:3000 express-mikroorm-ecs-app"
+  },
+  "dependencies": {
+    "@mikro-orm/core": "^6.4.16",
+    "@mikro-orm/migrations": "^6.4.16",
+    "@mikro-orm/mysql": "^6.4.16",
+    "@mikro-orm/seeder": "^6.4.16",
+    "axios": "^1.10.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "mikro-orm": "^6.4.16",
+    "node-cron": "^4.1.0",
+    "reflect-metadata": "^0.2.2",
+    "typescript": "^5.8.3",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@mikro-orm/cli": "^6.4.16",
+    "@types/express": "^5.0.3",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^24.0.1",
+    "jest": "^30.0.2",
+    "ts-jest": "^29.4.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/tests/**/*.test.ts"
+    ],
+    "collectCoverage": true
+  },
+  "license": "MIT"
+}

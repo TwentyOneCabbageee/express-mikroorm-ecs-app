@@ -1,0 +1,33 @@
+{
+  "family": "express-mikroorm-ecs-app",
+  "containerDefinitions": [
+    {
+      "name": "express-mikroorm-app",
+      "image": "your-docker-image:latest",
+      "memory": 512,
+      "cpu": 256,
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "hostPort": 3000,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "DATABASE_URL",
+          "value": "your-database-connection-string"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/express-mikroorm-ecs-app",
+          "awslogs-region": "your-region",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}

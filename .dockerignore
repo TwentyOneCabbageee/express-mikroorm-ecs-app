@@ -1,0 +1,10 @@
+node_modules
+dist
+*.log
+*.tsbuildinfo
+*.env
+Dockerfile
+docker-compose.yml
+tests/coverage
+tests/unit/*.test.js
+tests/integration/*.test.js
