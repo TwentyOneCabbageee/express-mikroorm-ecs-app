@@ -1,4 +1,4 @@
-# Express MikroORM ECS App
+# Code Test
 
 This project is a standalone Express API application built with TypeScript, utilizing MikroORM for database interactions and Jest for testing. It is designed to run locally and is ready for deployment on Amazon ECS.
 
