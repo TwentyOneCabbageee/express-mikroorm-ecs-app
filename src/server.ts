@@ -13,7 +13,7 @@ const startServer = async () => {
 
     // TODO: eventbridge/lambda
     const notificationService = new NotificationService();
-    // notificationService.greet(); //delete for testing purposes
+    notificationService.greet(); //delete for testing purposes
 
     cron.schedule('0 * * * *', () => {
         notificationService.greet();

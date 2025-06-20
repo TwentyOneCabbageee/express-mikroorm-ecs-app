@@ -6,6 +6,7 @@ import mikroOrmConfig from "../config/mikro-orm.config";
 import axios from "axios";
 import { eventNames } from "process";
 import { v4 as uuidv4 } from 'uuid';
+import { EventsEntity } from "../database/entities/EventsEntity";
 
 export class NotificationService {
     private PROCESSING_IN_PROGRESS = false;
@@ -36,13 +37,16 @@ export class NotificationService {
         const users:UsersEntity[] = await entityManager.getConnection().execute(`
             SELECT u.*
             FROM users u
+            LEFT JOIN usersevents ue 
+            ON ue.user_id_id = u.id 
+            AND ue.event_id_id = (SELECT id FROM events WHERE name = 'birthday')
             LEFT JOIN notifications n 
-                ON n.user_id = u.id 
-                AND n.event = 'birthday'
-            WHERE DATE_FORMAT(u.birthdate, '%m-%d') = DATE_FORMAT(
+            ON n.user_id_id = u.id 
+            AND n.event_id_id = (SELECT id FROM events WHERE name = 'birthday')
+            WHERE DATE_FORMAT(ue.date, '%m-%d') = DATE_FORMAT(
                     DATE(CONVERT_TZ(NOW(), @@session.time_zone, u.timezone)), '%m-%d'
                 )
-            AND HOUR(CONVERT_TZ(NOW(), @@session.time_zone, u.timezone)) = 5
+            AND HOUR(CONVERT_TZ(NOW(), @@session.time_zone, u.timezone)) = 13
             AND u.deleted_at IS NULL
             GROUP BY u.id
             HAVING MAX(n.created_at) IS NULL 
@@ -71,6 +75,10 @@ export class NotificationService {
     } 
 
     private async processUserNotifications(users: UsersEntity[], entityManager:any) {
+        const birthdayEvent = await entityManager.findOne(
+            EventsEntity, 
+            { name: 'birthday' },
+        );
         await Promise.all(users.map(user => {
             const id = uuidv4();
 
@@ -84,7 +92,7 @@ export class NotificationService {
                 entityManager.insert(NotificationsEntity, {
                     id: id,
                     userId: user.id,
-                    event: 'birthday',
+                    eventId: birthdayEvent.id,
                     createdAt: new Date().toISOString().slice(0, 10)
                 });  
             })
