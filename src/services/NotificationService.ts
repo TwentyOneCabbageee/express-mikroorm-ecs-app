@@ -35,20 +35,21 @@ export class NotificationService {
         
 
         const users:UsersEntity[] = await entityManager.getConnection().execute(`
-            SELECT u.*
+            SELECT u.id,u.timezone,ue.id,n.created_at,u.firstname,u.lastname
             FROM users u
-            LEFT JOIN usersevents ue 
-            ON ue.user_id_id = u.id 
-            AND ue.event_id_id = (SELECT id FROM events WHERE name = 'birthday')
+            LEFT JOIN userevents ue 
+            ON ue.user_id = u.id 
+            RIGHT JOIN events e 
+            ON e.id = ue.event_id 
+            AND e.name ='birthday'
             LEFT JOIN notifications n 
-            ON n.user_id_id = u.id 
-            AND n.event_id_id = (SELECT id FROM events WHERE name = 'birthday')
+            ON n.user_event_id_id = ue.id
             WHERE DATE_FORMAT(ue.date, '%m-%d') = DATE_FORMAT(
                     DATE(CONVERT_TZ(NOW(), @@session.time_zone, u.timezone)), '%m-%d'
                 )
-            AND HOUR(CONVERT_TZ(NOW(), @@session.time_zone, u.timezone)) = 13
+            AND HOUR(CONVERT_TZ(NOW(), @@session.time_zone, u.timezone)) = 2
             AND u.deleted_at IS NULL
-            GROUP BY u.id
+            GROUP BY u.id,ue.id,n.created_at
             HAVING MAX(n.created_at) IS NULL 
                 OR YEAR(CONVERT_TZ(MAX(n.created_at), @@session.time_zone, u.timezone)) 
                     <= YEAR(CONVERT_TZ(NOW(), @@session.time_zone, u.timezone)) - 1;
@@ -75,11 +76,7 @@ export class NotificationService {
     } 
 
     private async processUserNotifications(users: UsersEntity[], entityManager:any) {
-        const birthdayEvent = await entityManager.findOne(
-            EventsEntity, 
-            { name: 'birthday' },
-        );
-        await Promise.all(users.map(user => {
+        await Promise.all(users.map((user:UsersEntity) => {
             const id = uuidv4();
 
             //TODO: SNS/SQS/lambda
@@ -91,9 +88,8 @@ export class NotificationService {
             .then(res => {
                 entityManager.insert(NotificationsEntity, {
                     id: id,
-                    userId: user.id,
-                    eventId: birthdayEvent.id,
-                    createdAt: new Date().toISOString().slice(0, 10)
+                    userEventId: user.id,
+                    createdAt: new Date()
                 });  
             })
             .catch(error => {

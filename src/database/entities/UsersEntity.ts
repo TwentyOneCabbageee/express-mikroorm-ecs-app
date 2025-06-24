@@ -6,13 +6,10 @@ import { NotificationsEntity } from './NotificationsEntity';
 @Entity({tableName : 'users'})
 export class UsersEntity {
     @PrimaryKey({ type: 'uuid' })
-    id?: string = uuidv4();
+    id: string = uuidv4();
 
-    @OneToMany(() => UserEventsEntity, userEvent => userEvent.userId)
+    @OneToMany(() => UserEventsEntity, userEvent => userEvent.user)
     userEvents = new Collection<UserEventsEntity>(this);
-    
-    @OneToMany(() => NotificationsEntity, userEvent => userEvent.userId)
-    notifications = new Collection<NotificationsEntity>(this);
 
     @Property()
     firstname!: string;
@@ -27,11 +24,11 @@ export class UsersEntity {
     timezone?: string;
 
     @Property()
-    createdAt?: string;
+    createdAt?: Date;
 
     @Property()
-    updatedAt?: string; 
+    updatedAt?: Date; 
 
     @Property({ nullable: true })
-    deletedAt?: string;
+    deletedAt?: Date;
 }

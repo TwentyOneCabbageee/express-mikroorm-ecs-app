@@ -125,33 +125,33 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "varchar(255)",
+          "type": "datetime",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 255,
-          "mappedType": "string"
+          "length": null,
+          "mappedType": "datetime"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "varchar(255)",
+          "type": "datetime",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 255,
-          "mappedType": "string"
+          "length": null,
+          "mappedType": "datetime"
         },
         "deleted_at": {
           "name": "deleted_at",
-          "type": "varchar(255)",
+          "type": "datetime",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": true,
-          "length": 255,
-          "mappedType": "string"
+          "length": null,
+          "mappedType": "datetime"
         }
       },
       "name": "users",
@@ -183,8 +183,8 @@
           "length": 36,
           "mappedType": "string"
         },
-        "user_id_id": {
-          "name": "user_id_id",
+        "user_id": {
+          "name": "user_id",
           "type": "varchar(36)",
           "unsigned": false,
           "autoincrement": false,
@@ -193,8 +193,8 @@
           "length": 36,
           "mappedType": "string"
         },
-        "event_id_id": {
-          "name": "event_id_id",
+        "event_id": {
+          "name": "event_id",
           "type": "varchar(36)",
           "unsigned": false,
           "autoincrement": false,
@@ -215,33 +215,33 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "varchar(255)",
+          "type": "datetime",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 255,
-          "mappedType": "string"
+          "length": null,
+          "mappedType": "datetime"
         }
       },
-      "name": "usersEvents",
+      "name": "userEvents",
       "indexes": [
         {
           "columnNames": [
-            "user_id_id"
+            "user_id"
           ],
           "composite": false,
-          "keyName": "usersEvents_user_id_id_index",
+          "keyName": "userEvents_user_id_index",
           "constraint": false,
           "primary": false,
           "unique": false
         },
         {
           "columnNames": [
-            "event_id_id"
+            "event_id"
           ],
           "composite": false,
-          "keyName": "usersEvents_event_id_id_index",
+          "keyName": "userEvents_event_id_index",
           "constraint": false,
           "primary": false,
           "unique": false
@@ -251,7 +251,7 @@
             "created_at"
           ],
           "composite": false,
-          "keyName": "usersEvents_created_at_index",
+          "keyName": "userEvents_created_at_index",
           "constraint": false,
           "primary": false,
           "unique": false
@@ -269,24 +269,24 @@
       ],
       "checks": [],
       "foreignKeys": {
-        "usersEvents_user_id_id_foreign": {
-          "constraintName": "usersEvents_user_id_id_foreign",
+        "userEvents_user_id_foreign": {
+          "constraintName": "userEvents_user_id_foreign",
           "columnNames": [
-            "user_id_id"
+            "user_id"
           ],
-          "localTableName": "usersEvents",
+          "localTableName": "userEvents",
           "referencedColumnNames": [
             "id"
           ],
           "referencedTableName": "users",
           "updateRule": "cascade"
         },
-        "usersEvents_event_id_id_foreign": {
-          "constraintName": "usersEvents_event_id_id_foreign",
+        "userEvents_event_id_foreign": {
+          "constraintName": "userEvents_event_id_foreign",
           "columnNames": [
-            "event_id_id"
+            "event_id"
           ],
-          "localTableName": "usersEvents",
+          "localTableName": "userEvents",
           "referencedColumnNames": [
             "id"
           ],
@@ -308,18 +308,8 @@
           "length": 36,
           "mappedType": "string"
         },
-        "event_id_id": {
-          "name": "event_id_id",
-          "type": "varchar(36)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 36,
-          "mappedType": "string"
-        },
-        "user_id_id": {
-          "name": "user_id_id",
+        "user_event_id_id": {
+          "name": "user_event_id_id",
           "type": "varchar(36)",
           "unsigned": false,
           "autoincrement": false,
@@ -330,33 +320,23 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "varchar(255)",
+          "type": "datetime",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 255,
-          "mappedType": "string"
+          "length": null,
+          "mappedType": "datetime"
         }
       },
       "name": "notifications",
       "indexes": [
         {
           "columnNames": [
-            "event_id_id"
+            "user_event_id_id"
           ],
           "composite": false,
-          "keyName": "notifications_event_id_id_index",
-          "constraint": false,
-          "primary": false,
-          "unique": false
-        },
-        {
-          "columnNames": [
-            "user_id_id"
-          ],
-          "composite": false,
-          "keyName": "notifications_user_id_id_index",
+          "keyName": "notifications_user_event_id_id_index",
           "constraint": false,
           "primary": false,
           "unique": false
@@ -374,28 +354,16 @@
       ],
       "checks": [],
       "foreignKeys": {
-        "notifications_event_id_id_foreign": {
-          "constraintName": "notifications_event_id_id_foreign",
+        "notifications_user_event_id_id_foreign": {
+          "constraintName": "notifications_user_event_id_id_foreign",
           "columnNames": [
-            "event_id_id"
+            "user_event_id_id"
           ],
           "localTableName": "notifications",
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "events",
-          "updateRule": "cascade"
-        },
-        "notifications_user_id_id_foreign": {
-          "constraintName": "notifications_user_id_id_foreign",
-          "columnNames": [
-            "user_id_id"
-          ],
-          "localTableName": "notifications",
-          "referencedColumnNames": [
-            "id"
-          ],
-          "referencedTableName": "users",
+          "referencedTableName": "userEvents",
           "updateRule": "cascade"
         }
       },
