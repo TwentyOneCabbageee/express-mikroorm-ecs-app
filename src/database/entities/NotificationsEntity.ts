@@ -1,18 +1,14 @@
 import { Entity, Index, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core';
-import { UsersEntity } from './UsersEntity';
-import { EventsEntity } from './EventsEntity';
+import { UserEventsEntity } from './UserEventsEntity';
 
 @Entity({tableName : 'notifications'})
 export class NotificationsEntity {
     @PrimaryKey({ type: 'uuid' })
     id!: string;
 
-    @ManyToOne(() => EventsEntity, { nullable: false })
-    eventId!: string;
-
-    @ManyToOne(() => UsersEntity, { nullable: false })
-    userId!: string;
+    @ManyToOne(() => UserEventsEntity, { nullable: false })
+    userEventId!: string;
 
     @Property()
-    createdAt!: string;
+    createdAt!: Date;
 }

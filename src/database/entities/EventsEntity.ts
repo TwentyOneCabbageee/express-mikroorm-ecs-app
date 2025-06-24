@@ -8,11 +8,8 @@ export class EventsEntity {
     @PrimaryKey({ type: 'uuid' })
     id!: string;
 
-    @OneToMany(() => UserEventsEntity, userEvent => userEvent.eventId)
+    @OneToMany(() => UserEventsEntity, userEvent => userEvent.event)
     userEvents = new Collection<UserEventsEntity>(this);
-
-    @OneToMany(() => NotificationsEntity, notificationsEntity => notificationsEntity.eventId)
-    notifications = new Collection<UserEventsEntity>(this);
 
     @Property()
     @Index()

@@ -14,8 +14,14 @@ export class UserService {
         const entityManager = this.orm.em.fork();  
         const user = await entityManager.findOne(
             UsersEntity, 
-            { id: userId, deletedAt: null },
-            { populate: ['userEvents.eventId'] }
+            { 
+                id: userId, 
+                deletedAt: null, 
+                userEvents: { event: { name: 'birthday' } }  
+            },
+            { 
+               populate: ['$infer']
+            }
         );
 
         if(!user) {
@@ -40,11 +46,10 @@ export class UserService {
             id: userid,
             firstname: user.firstName,
             lastname: user.lastName,
-            // birthdate: new Date(user.birthdate).toISOString().slice(0, 10),
             address: user.address,
             timezone: user.timezone,
-            createdAt: new Date().toISOString().slice(0, 10),
-            updatedAt: new Date().toISOString().slice(0, 10)
+            createdAt: new Date(),
+            updatedAt: new Date()
         });
 
         const birthdayEvent = await entityManager.findOne(
@@ -62,10 +67,10 @@ export class UserService {
         const userEventsId = uuidv4();
         await entityManager.insert(UserEventsEntity, {
             id: userEventsId,
-            userId: userid,
-            eventId: birthdayEvent.id,   
+            user: userid,
+            event: birthdayEvent.id,
             date: new Date(user.birthdate).toISOString().slice(0, 10),
-            createdAt: new Date().toISOString().slice(0, 10),
+            createdAt: new Date(),
         });
     }
 
@@ -81,7 +86,7 @@ export class UserService {
             });
         }
 
-        user.deletedAt = new Date().toISOString().slice(0, 10);
+        user.deletedAt = new Date();
         await entityManager.persistAndFlush(user);
     }
 
@@ -107,16 +112,15 @@ export class UserService {
             });
         }
 
-        wrap(user).assign({
-            ...(request.firstName !== undefined && { firstname: request.firstName }),
-            ...(request.lastName !== undefined && { lastname: request.lastName }),
-            ...(request.address !== undefined && { address: request.address }),
-            ...(request.timezone !== undefined && { timezone: request.timezone }),
-        });
+        request.firstName !== undefined && (user.firstname = request.firstName);
+        request.lastName !== undefined && (user.lastname = request.lastName);
+        request.address !== undefined && (user.address = request.address);
+        request.timezone !== undefined && (user.timezone = request.timezone);
+
         await entityManager.flush();
 
         if(request.birthdate){
-            const userEvent = await entityManager.findOne(UserEventsEntity, { userId: request.userId });
+            const userEvent = await entityManager.findOne(UserEventsEntity, { user: request.userId });
 
             if(!userEvent) {
                 throw ({
@@ -125,9 +129,10 @@ export class UserService {
                 });
             }
 
-            wrap(userEvent).assign({
-                date: new Date(request.birthdate).toISOString().slice(0, 10)
-            });
+            let date:Date = new Date(request.birthdate)
+            date.setHours(0, 0, 0, 0); 
+            userEvent.date = date
+
             await entityManager.flush();
         }
 
